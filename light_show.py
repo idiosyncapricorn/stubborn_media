@@ -73,7 +73,7 @@ def generate_light_show_with_strobe(mp3_file, bpm):
 
 if __name__ == "__main__":
     # Input the online link to the MP3
-    mp3_url = "https://example.com/song.mp3"  # Replace with the actual link
+    mp3_url = "https://on.soundcloud.com/Wnk6RfwqMJysX67J7"
     try:
         print("Downloading MP3 from the provided link...")
         with requests.get(mp3_url, stream=True) as response:
