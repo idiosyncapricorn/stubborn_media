@@ -2,6 +2,8 @@ import time
 import random
 import librosa
 import pygame
+import requests
+import tempfile
 
 def analyze_bpm(mp3_file):
     """Analyze the MP3 file to extract BPM."""
@@ -70,12 +72,24 @@ def generate_light_show_with_strobe(mp3_file, bpm):
     pygame.quit()
 
 if __name__ == "__main__":
-    # Set the MP3 file path
-    mp3_file = r"/Users/gavinmorrison/Python/RGB/Stubborn.mp3"
+    # Input the online link to the MP3
+    mp3_url = "https://example.com/song.mp3"  # Replace with the actual link
     try:
-        bpm = analyze_bpm(mp3_file)  # Analyze BPM from the MP3
-        generate_light_show_with_strobe(mp3_file, bpm)
+        print("Downloading MP3 from the provided link...")
+        with requests.get(mp3_url, stream=True) as response:
+            response.raise_for_status()
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_mp3:
+                temp_mp3.write(response.content)
+                temp_mp3_path = temp_mp3.name
+        print(f"MP3 downloaded and saved as: {temp_mp3_path}")
+
+        # Analyze BPM and generate the light show
+        bpm = analyze_bpm(temp_mp3_path)  # Analyze BPM from the MP3
+        generate_light_show_with_strobe(temp_mp3_path, bpm)
+
     except FileNotFoundError:
-        print(f"Error: File not found at path {mp3_file}")
+        print(f"Error: File not found at the provided URL {mp3_url}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error: Unable to download MP3 - {e}")
     except Exception as e:
         print(f"An error occurred: {e}")
